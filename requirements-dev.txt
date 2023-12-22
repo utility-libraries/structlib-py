@@ -2,3 +2,4 @@
 pip-autoremove
 build
 twine
+better-exceptions
