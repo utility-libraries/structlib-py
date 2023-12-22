@@ -30,6 +30,10 @@ __license__ = "MIT"
 __maintainer__ = "PlayerG9"
 __email__ = None
 __status__ = "Prototype"  # Prototype, Development, Production
-__description__ = "similar function to the builtin struct-library but more efficient"
+__description__ = "similar function to the builtin struct-library but more friendly"
 __version_info__ = (0, 0, 0)
 __version__ = '.'.join(str(_) for _ in __version_info__)
+
+from ._structure import Structure, make_structure
+from ._dumping import dumps, loads, struct_identifier
+from . import types
