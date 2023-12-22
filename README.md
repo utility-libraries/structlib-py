@@ -23,7 +23,7 @@ similar function to the builtin struct-library but more friendly
 
 ## Examples
 
-### Example 1
+### Example 1: Basic
 
 ```python
 from dataclasses import dataclass
@@ -32,7 +32,7 @@ from structurelib.types import *
 
 @dataclass
 class MyStruct(sl.Structure):  # sl.Structure inheritance is optional
-    name: string
+    name: str  # `string` is also possible
     value: int8
 
 sl.dumps(MyStruct("Hello World", 8))  # b'\x0bHello World\x08'
@@ -41,7 +41,7 @@ sl.loads(b'\x0bHello World\x08', cls=MyStruct)  # MyStruct(name="Hello World", v
 MyStruct.load_struct(b'\x0bHello World\x08')  # MyStruct(name="Hello World", value=8)
 ```
 
-### Example 2
+### Example 2: Nested Objects
 
 ```python
 import dataclasses
@@ -62,26 +62,26 @@ class User:
 
 
 instance = User("hello", Credentials("hello", "world"))
-print(instance)
+print(instance)  # User(name="hello", Credentials(name="hello", password="world"))
 sld = sl.dumps(instance)
 print(f"dump | {len(sld):>3} | {sld}")
 loaded = sl.loads(sld, cls=User)
-print(loaded)
+print(loaded)  # User(name="hello", Credentials(name="hello", password="world"))
 ```
 
 ## Documentation
 
 ### Supported types
 
-> You can add additional types importing them at the top of your file.
+> You can add additional types by importing them at the top of your file.
 > These types can reduce the output size.
 > ```python
 > from structurelib.types import *
 > ```
-> Alle additional types can be used without problem to replace the old ones
+> All additional types can be used without problem to replace the old ones and won't interfere with typechecking.
 > ```python
 > class MyClass:
->   attr: uint16
+>     attr: uint16
 > ```
 
 | type              | description               | size    | values                                                 |
