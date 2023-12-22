@@ -1,17 +1,24 @@
 # structurelib-py
 similar function to the builtin struct-library but more efficient
 
+## Installation
+
+`pip install structurelib`
+
+## Example
+
 ```python
+from dataclasses import dataclass
 import structurelib as sl
+from structurelib.types import *
 
-@dataclasses.dataclass
-class MyStruct(sl.Structure):
-    name: Annotated[str, sl.String(10))]
-    value: int
+@dataclass
+class MyStruct(sl.Structure):  # sl.Structure inheritance is optional
+    name: string
+    value: int8
 
-sl.dumps(MyStruct("Hello World", 10))
-MyStruct.struct_dumps(binary/stream)
-# b'\x12Hello World\x10'
-sl.loads(binary/stream, type=MyStruct)
-MyStruct.struct_load(binary/stream)
+sl.dumps(MyStruct("Hello World", 8))  # b'\x0bHello World\x08'
+MyStruct.dump_struct(MyStruct("Hello World", 8))  # b'\x0bHello World\x08'
+sl.loads(b'\x0bHello World\x08', cls=MyStruct)  # MyStruct(name="Hello World", value=8)
+MyStruct.load_struct(b'\x0bHello World\x08')  # MyStruct(name="Hello World", value=8)
 ```
