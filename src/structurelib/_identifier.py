@@ -14,6 +14,6 @@ def struct_identifier(structure: t.Type) -> bytes:
     identifier = hashlib.sha256(usedforsecurity=False)
 
     for attr, hint in t.get_type_hints(structure).items():
-        identifier.update(f"{attr}{hint.__name__}{t.get_args(hint)}".encode())
+        identifier.update(f"{hint.__name__}{t.get_args(hint)}".encode())
 
     return identifier.digest()
