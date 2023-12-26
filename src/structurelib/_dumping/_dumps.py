@@ -30,6 +30,10 @@ LOADERS: t.Dict[t.Type, t.Callable[[t.BinaryIO, t.Type], t.Any]] = {
 }
 
 
+def _isbuiltin(tp: t.Type) -> bool:
+    return tp.__module__ in {'__builtin__', '__builtins__', 'builtins'}
+
+
 def dumps(obj: object) -> bytes:
     r"""
     dump an object
@@ -47,6 +51,8 @@ def dumps(obj: object) -> bytes:
         if origin in DUMPERS:
             dumped = DUMPERS[origin](value, hint)
             stream.write(dumped)
+        elif _isbuiltin(origin):
+            raise ValueError(f"Unsupported builtin type found: {origin.__qualname__}")
         else:
             stream.write(dumps(value))
 
@@ -65,12 +71,19 @@ def loads(dump: t.Union[bytes, t.BinaryIO], cls: t.Type[T]) -> T:
         dump = io.BytesIO(dump)
 
     instance = object.__new__(cls)
+    # used for problem with object.__new__(list)
+    # try:
+    #     instance = object.__new__(cls)
+    # except TypeError:
+    #     instance = cls.__new__(cls)
 
     for attr, hint in t.get_type_hints(cls).items():
         origin = t.get_origin(hint) or hint
         if origin in LOADERS:
             loaded = LOADERS[origin](dump, hint)
             setattr(instance, attr, loaded)
+        elif _isbuiltin(origin):
+            raise ValueError(f"Unsupported builtin type found: {origin}")
         else:
             setattr(instance, attr, loads(dump, cls=origin))
 
