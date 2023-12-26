@@ -2,4 +2,4 @@
 r"""
 
 """
-from ._dumps import dumps, loads, struct_identifier
+from ._dumps import dumps, loads

@@ -35,5 +35,6 @@ __version_info__ = (0, 0, 0)
 __version__ = '.'.join(str(_) for _ in __version_info__)
 
 from ._structure import Structure, make_structure
-from ._dumping import dumps, loads, struct_identifier
+from ._dumping import dumps, loads
+from ._identifier import struct_identifier
 from . import types
