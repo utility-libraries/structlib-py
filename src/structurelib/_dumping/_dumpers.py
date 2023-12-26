@@ -16,6 +16,40 @@ __all__ = [
 ]
 
 
+def _dump_size(size: int) -> bytes:
+    large_flag = 0b10000000
+    if not (size & large_flag):
+        # size is small enough. save it in one byte and first bit is 0 as flag
+        return int.to_bytes(size, 1, "big", signed=False)
+    else:
+        # size is too big. save it multiple bytes and save that amount in the first byte. mark first bit is 1 as flag
+        size_bytes = _dump_int_min(size, signed=False)
+        return int.to_bytes(len(size_bytes) | large_flag, 1, "big", signed=False) + size_bytes
+
+
+def _load_size(stream: t.BinaryIO) -> int:
+    large_flag = 0b10000000
+    head = stream.read(1)
+    size = int.from_bytes(head, "big", signed=False)
+    if not (size & large_flag):
+        return size
+    else:
+        length = size ^ large_flag  # removes flag bits
+        return int.from_bytes(stream.read(length), "big", signed=False)
+
+
+def _dump_int_min(value: int, *, signed: bool) -> bytes:
+    r"""
+    dumps an integer in the smalled possible bytes
+    """
+    n_bytes = 1
+    while True:
+        try:
+            return int.to_bytes(value, n_bytes, "big", signed=signed)
+        except OverflowError:
+            n_bytes += 1
+
+
 def dump_int(value: int, hint: t.TypeAlias) -> bytes:
     args = iter(t.get_args(hint))
     length = next(args, None)
@@ -23,16 +57,8 @@ def dump_int(value: int, hint: t.TypeAlias) -> bytes:
     if length is not None:
         return int.to_bytes(value, length, "big", signed=signed)
     else:
-        # todo: fix this try-error style
-        n_bytes = 1
-        while True:
-            try:
-                dump = int.to_bytes(value, n_bytes, "big", signed=signed)
-            except OverflowError:
-                n_bytes += 1
-                continue
-            else:
-                return int.to_bytes(n_bytes, 1, "big", signed=False) + dump
+        dump = _dump_int_min(value, signed=signed)
+        return _dump_size(len(dump)) + dump
 
 
 def load_int(stream: t.BinaryIO, hint: t.TypeAlias) -> int:
@@ -42,7 +68,7 @@ def load_int(stream: t.BinaryIO, hint: t.TypeAlias) -> int:
     if length is not None:
         return int.from_bytes(stream.read(length), "big", signed=signed)
     else:
-        length = int.from_bytes(stream.read(1), "big", signed=False)
+        length = _load_size(stream=stream)
         return int.from_bytes(stream.read(length), "big", signed=signed)
 
 
@@ -65,7 +91,7 @@ def dump_str(value: str, hint: t.TypeAlias) -> bytes:
             raise ValueError(f"{value!r} is longer than {length} bytes")
         return encoded.ljust(length, b'\0')
     else:
-        return int.to_bytes(len(encoded), 1, byteorder="big") + encoded
+        return _dump_size(len(encoded)) + encoded
 
 
 def load_str(stream: t.BinaryIO, hint: t.TypeAlias) -> str:
@@ -74,7 +100,7 @@ def load_str(stream: t.BinaryIO, hint: t.TypeAlias) -> str:
     if length is not None:
         return stream.read(length).rstrip(b'\0').decode()
     else:
-        length = int.from_bytes(stream.read(1), byteorder="big")
+        length = _load_size(stream=stream)
         return stream.read(length).decode()
 
 
@@ -86,7 +112,7 @@ def dump_bytes(value: bytes, hint: t.TypeAlias) -> bytes:
             raise ValueError(f"{value!r} is longer than {length} bytes")
         return value.ljust(length, b'\0')
     else:
-        return int.to_bytes(len(value), 1, byteorder="big") + value
+        return _dump_size(len(value)) + value
 
 
 def load_bytes(stream: t.BinaryIO, hint: t.TypeAlias) -> bytes:
@@ -95,7 +121,7 @@ def load_bytes(stream: t.BinaryIO, hint: t.TypeAlias) -> bytes:
     if length is not None:
         return stream.read(length).rstrip(b'\0')
     else:
-        length = int.from_bytes(stream.read(1), byteorder="big")
+        length = _load_size(stream=stream)
         return stream.read(length)
 
 
