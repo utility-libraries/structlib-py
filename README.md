@@ -9,9 +9,6 @@ similar function to the builtin struct-library but more friendly
     * [Example 2: Nested Objects](#example-2-nested-objects)
   * [Documentation](#documentation)
     * [Supported types](#supported-types)
-      * [Why are there so many types?](#why-are-there-so-many-types)
-        * [Optimizations](#optimizations)
-        * [Compatibility](#compatibility)
     * [`dumps()`](#dumps)
     * [`loads()`](#loads)
     * [`Structure`-class](#structure-class)
@@ -110,21 +107,6 @@ print(loaded)  # User(name="hello", Credentials(name="hello", password="world"))
 | binary[n]         | binary data with length n | n nyte  |                                                        |
 | bool/boolean      | boolean value             | 1 byte  | True/False                                             |
 
-#### Why are there so many types?
-
-For optimizations and compatibility with other languages.
-
-##### Optimizations
-
-For example. If you know your number will always be positive.
-Then you can reduce the output-size by using `uint` instead of the normal `int`.
-
-In the same way. If you know the number will always be very short (e.g. max 20).
-Then you can use `int8` or `uint8` to save the size-byte that is prepended to the normal `int`.
-
-##### Compatibility
-
-If you sent the dumped data over the network to another server that used for example c++ instead of python, then it's a little bit easier to load `uint16` than the dynamic `uint`.
 
 ### `dumps()`
 
