@@ -107,6 +107,7 @@ print(loaded)  # User(name="hello", Credentials(name="hello", password="world"))
 | binary[n]         | binary data with length n | n nyte  |                                                        |
 | bool/boolean      | boolean value             | 1 byte  | True/False                                             |
 
+Other types like `list`, `dict`, `set` and so on are not supported.
 
 ### `dumps()`
 
