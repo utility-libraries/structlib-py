@@ -29,6 +29,7 @@ class _StructType(_t._SpecialGenericAlias, _root=True):  # noqa
 
 # string[nbytes=None]
 string: _t.TypeAlias = _StructType(str, 1, inst=True, name="string")
+char: _t.TypeAlias = string[1]
 
 # integer[nbytes=None, signed=True]
 integer: _t.TypeAlias = _StructType(int, -1, inst=True, name="integer")
