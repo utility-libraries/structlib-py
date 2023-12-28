@@ -73,39 +73,49 @@ print(loaded)  # User(name="hello", Credentials(name="hello", password="world"))
 
 ### Supported types
 
-> You can add additional types by importing them at the top of your file.
-> These types can reduce the output size.
-> ```python
-> from structurelib.types import *
-> ```
-> All additional types can be used without problem to replace the old ones and won't interfere with typechecking.
-> ```python
-> class MyClass:
->     attr: uint16
-> ```
+You can keep it basic and continue to use the builtin types and it should work
 
-| type              | description               | size    | values                                                 |
-|-------------------|---------------------------|---------|--------------------------------------------------------|
-| int/integer       | any integer               | dynamic | -∞ - +∞                                                |
-| integer[n, False] | integer                   | n byte  | 0 - 2<sup>8*n</sup>                                    |
-| integer[n, True]  | integer                   | n byte  | -2<sup>8*(n-1)</sup> - 2<sup>8*(n-1)</sup>             |
-| int8              | integer                   | 1 byte  | -128 - 127                                             |
-| int16             | integer                   | 2 bytes | -32,768 - 32,767                                       |
-| int32             | integer                   | 4 bytes | -2,147,483,648 - 2,147,483,647                         |
-| int64             | integer                   | 8 bytes | -9,223,372,036,854,775,808 - 9,223,372,036,854,775,807 |
-| uint              | any positive integer      | dynamic | 0 - +∞                                                 |
-| uint8             | positive integer          | 1 byte  | 0 - 255                                                |
-| uint16            | positive integer          | 2 bytes | 0 - 65,535                                             |
-| uint32            | positive integer          | 4 bytes | 0 - 4,294,967,295                                      |
-| uint64            | positive integer          | 8 bytes | 0 - 18,446,744,073,709,551,615                         |
-| float/floating    | floating point number     | 8 bytes | -1.7e308 - 1.7e308                                     |
-| float32           | floating point number     | 4 bytes | -3.4e38 - 3.4e38                                       |
-| float64           | floating point number     | 8 bytes | -1.7e308 - 1.7e308                                     |
-| str/string        | text of any kind          | dynamic |                                                        |
-| string[n]         | text with length n        | n bytes |                                                        |
-| bytes/binary      | any binary data           | dynamic |                                                        |
-| binary[n]         | binary data with length n | n nyte  |                                                        |
-| bool/boolean      | boolean value             | 1 byte  | True/False                                             |
+```python
+class MyStruct:
+    name: str
+    number: int
+```
+
+But you can also add the additional types by importing them at the top of your file.
+These types can reduce the output size.
+```python
+from structurelib.types import *
+```
+All additional types can be used without problem to replace the old ones and won't interfere with typechecking.
+```python
+class MyStruct:
+    name: string
+    number: uint16
+```
+
+| type              | description                | size    | values                                                 |
+|-------------------|----------------------------|---------|--------------------------------------------------------|
+| int/integer       | any integer                | dynamic | -∞ - +∞                                                |
+| integer[n, False] | integer                    | n byte  | 0 - 2<sup>8*n</sup>                                    |
+| integer[n, True]  | integer                    | n byte  | -2<sup>8*(n-1)</sup> - 2<sup>8*(n-1)</sup>             |
+| int8              | integer                    | 1 byte  | -128 - 127                                             |
+| int16             | integer                    | 2 bytes | -32,768 - 32,767                                       |
+| int32             | integer                    | 4 bytes | -2,147,483,648 - 2,147,483,647                         |
+| int64             | integer                    | 8 bytes | -9,223,372,036,854,775,808 - 9,223,372,036,854,775,807 |
+| uint              | any positive integer       | dynamic | 0 - +∞                                                 |
+| uint8             | positive integer           | 1 byte  | 0 - 255                                                |
+| uint16            | positive integer           | 2 bytes | 0 - 65,535                                             |
+| uint32            | positive integer           | 4 bytes | 0 - 4,294,967,295                                      |
+| uint64            | positive integer           | 8 bytes | 0 - 18,446,744,073,709,551,615                         |
+| float/floating    | floating point number      | 8 bytes | -1.7e308 - 1.7e308                                     |
+| float32           | floating point number      | 4 bytes | -3.4e38 - 3.4e38                                       |
+| float64           | floating point number      | 8 bytes | -1.7e308 - 1.7e308                                     |
+| str/string        | text of any kind           | dynamic |                                                        |
+| string[n]         | text with encoded length n | n bytes |                                                        |
+| char              | single character           | 1 byte  | *0-255                                                 |
+| bytes/binary      | any binary data            | dynamic |                                                        |
+| binary[n]         | binary data with length n  | n nyte  |                                                        |
+| bool/boolean      | boolean value              | 1 byte  | True/False                                             |
 
 Other builtin types like `list`, `dict`, `set` and so on are currently not supported.
 
